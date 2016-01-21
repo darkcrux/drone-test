@@ -3,4 +3,4 @@ build:
   volumes:
     - /var/run/docker.sock:/var/run/docker.sock
   commands:
-    - docker build -t ci/drone:$$DRONE_COMMIT .
+    - docker -H unix:///var/run/docker.sock build -t ci/drone:$$DRONE_COMMIT .
