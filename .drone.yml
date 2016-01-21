@@ -14,4 +14,4 @@ build:
       - docker stop ci_drone_$$COMMIT
       - docker rm ci_drone_$$COMMIT
       # packaging
-      - docker label ci/drone:$$COMMIT quay.io/darkcrux/drone-test:$$COMMIT
+      - docker tag ci/drone:$$COMMIT quay.io/darkcrux/drone-test:$$COMMIT
