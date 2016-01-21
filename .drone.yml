@@ -1,6 +1,17 @@
 build:
-  image: docker
-  volumes:
-    - /var/run/docker.sock:/var/run/docker.sock
-  commands:
-    - docker -H unix:///var/run/docker.sock build -t ci/drone:$$DRONE_COMMIT .
+  create_image:
+    image: docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    commands:
+      # build the image
+      - docker build -t ci/drone:$$COMMIT .
+      # run the image (make it wait for 10 secs)
+      - docker run -d --name ci_drone_$$COMMIT --entrypoint /bin/sh ci/drone:$$COMMIT -c 'sleep 10'
+      # run unit test
+      - docker exec ci_drone_$$COMMIT go test .
+      # clean up
+      - docker stop ci_drone_$$COMMIT
+      - docker rm ci_drone_$$COMMIT
+      # packaging
+      - docker label ci/drone:$$COMMIT quay.io/darkcrux/drone-test:$$COMMIT
